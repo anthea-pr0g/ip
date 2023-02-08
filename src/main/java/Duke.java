@@ -1,5 +1,10 @@
-import java.util.Scanner;
+import duke.Task;
+import duke.Deadline;
+import duke.Todo;
+import duke.Event;
+import duke.DukeException;
 
+import java.util.Scanner;
 
 public class Duke {
 
@@ -44,11 +49,8 @@ public class Duke {
             Task t = new Task(desc);
 
             if (line.toLowerCase().contains("unmark")) {
-
-
                 index_for_mark = Integer.parseInt(find_index[1]);
                 tasks[index_for_mark - 1].markAsUnDone();
-
 
                 System.out.println("____________________________________________________________\n"
                         + "OK, I've marked this task as not done yet:\n"
@@ -104,7 +106,7 @@ public class Duke {
                     System.out.println("____________________________________________________________\n"
                     +"Got it. I've added this task:\n" +
                             "  " + tasks[i] + "\n" +
-                            "Now you have " + (i + 1) + " tasks in the list."
+                            "Now you have " + (i + 1) + " tasks in the list.\n"
                     +"____________________________________________________________\n");
                     i += 1;
 
