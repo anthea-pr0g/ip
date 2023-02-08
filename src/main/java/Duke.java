@@ -3,6 +3,7 @@ import duke.Deadline;
 import duke.Todo;
 import duke.Event;
 import duke.DukeException;
+import java.util.ArrayList;
 
 import java.util.Scanner;
 
@@ -24,8 +25,7 @@ public class Duke {
 
         System.out.println(greeting);
         Scanner in = new Scanner(System.in);
-        String[] list = new String[100];
-        Task[] tasks = new Task[100];
+        ArrayList<Task> tasks = new ArrayList<>();
 
 
         int index_for_mark = 1;
@@ -39,33 +39,42 @@ public class Duke {
                 break;
             }
 
-            //getting index and line
-            list[i] = line;
+            //getting index for mark and delete
             String[] find_index = line.split(" ");
-
-            //Task description
-            String desc;
-            desc=line;
-            Task t = new Task(desc);
 
             if (line.toLowerCase().contains("unmark")) {
                 index_for_mark = Integer.parseInt(find_index[1]);
-                tasks[index_for_mark - 1].markAsUnDone();
+                tasks.get(index_for_mark - 1).markAsUnDone();
 
                 System.out.println("____________________________________________________________\n"
                         + "OK, I've marked this task as not done yet:\n"
-                        + "[" + tasks[index_for_mark - 1].getStatusIcon() + "] " + list[index_for_mark - 1] + "\n"
+                        + tasks.get(index_for_mark - 1) + "\n"
                         + "____________________________________________________________\n");
 
             } else if (line.toLowerCase().contains("mark")) {
                 index_for_mark = Integer.parseInt(find_index[1]);
-                tasks[index_for_mark - 1].markAsDone();
+                tasks.get(index_for_mark - 1).markAsDone();
                 System.out.println("____________________________________________________________\n"
-                        + "Nice! I've marked this task as done:\n" +
-                        "[" + tasks[index_for_mark - 1].getStatusIcon() + "] " + list[index_for_mark - 1] + "\n"
+                        + "Nice! I've marked this task as done:\n"
+                        + tasks.get(index_for_mark - 1) + "\n"
                         + "____________________________________________________________\n");
 
-            } else if (line.toLowerCase().contains("todo") || line.toLowerCase().contains("deadline") || line.toLowerCase().contains("event")) {
+            } else if(line.toLowerCase().contains("delete")) {
+                int index_for_delete=Integer.parseInt(find_index[1]);
+                System.out.println("____________________________________________________________\n"
+                        +" Noted. I've removed this task:\n" +
+                        "  " + tasks.get(index_for_delete-1) + "\n" +
+                        "Now you have " + (i-1) + " tasks in the list.\n"
+                        +"____________________________________________________________\n");
+                i -= 1;
+                tasks.remove(tasks.get(index_for_delete-1));
+
+            }
+
+
+
+
+            else if (line.toLowerCase().contains("todo") || line.toLowerCase().contains("deadline") || line.toLowerCase().contains("event")) {
                 boolean empty;
                 empty=false;
 
@@ -74,10 +83,9 @@ public class Duke {
                     String[] ToSplitTodo=line.split(" ");
 
                     try {
-                      // description.toLowerCase().substring(5, description.length());
-                      //list[i] = TodoTask;
+
                       String TodoTask = line.toLowerCase().replaceAll("todo","");
-                      tasks[i] = new Todo(TodoTask,ToSplitTodo.length);
+                      tasks.add(new Todo(TodoTask,ToSplitTodo.length));
 
                     } catch (DukeException ex) {
                       empty=true;
@@ -90,22 +98,21 @@ public class Duke {
                 } else if (line.toLowerCase().contains("deadline")) {
                     String[] ToSplitDeadline = line.split("/");
                     String DeadlineTask = ToSplitDeadline[0].toLowerCase().substring(9, ToSplitDeadline[0].length() - 1);
-                    list[i] = DeadlineTask;
-                    tasks[i] = new Deadline(DeadlineTask, ToSplitDeadline[1].substring(3, ToSplitDeadline[1].length()));
+                    tasks.add(new Deadline(DeadlineTask, ToSplitDeadline[1].substring(3, ToSplitDeadline[1].length())));
 
                     //sample:event project meeting /from Mon 2pm /to 4pm
                 } else if (line.toLowerCase().contains("event")) {
                     String[] ToSplitEvent = line.split("/");
                     String EventTask = ToSplitEvent[0].toLowerCase().substring(6, ToSplitEvent[0].length());
-                    list[i] = EventTask;
-                    tasks[i] = new Event(EventTask, ToSplitEvent[1].substring(5, ToSplitEvent[1].length()), ToSplitEvent[2].substring(3, ToSplitEvent[2].length()));
+                    tasks.add(new Event(EventTask, ToSplitEvent[1].substring(5, ToSplitEvent[1].length()), ToSplitEvent[2].substring(3, ToSplitEvent[2].length())));
 
                 }
+
 
                 if(!empty) {
                     System.out.println("____________________________________________________________\n"
                     +"Got it. I've added this task:\n" +
-                            "  " + tasks[i] + "\n" +
+                            "  " + tasks.get(i) + "\n" +
                             "Now you have " + (i + 1) + " tasks in the list.\n"
                     +"____________________________________________________________\n");
                     i += 1;
@@ -119,12 +126,7 @@ public class Duke {
 
                 for (int m = 0; m < i; m += 1) {
                     int index = m + 1;
-                    if (tasks[m] == null) {
-                        System.out.println(index + "." + "[" + t.getStatusIcon() + "] " + list[m]);
-                    } else {
-                        //the [X] or []
-                        System.out.println(index + "." + tasks[m]);
-                    }
+                    System.out.println(index + "." + tasks.get(m));
 
                 }
                 System.out.println("____________________________________________________________");
